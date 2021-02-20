@@ -3,14 +3,26 @@ from bs4 import BeautifulSoup
 import re
 import os
 
-# Constants
+# Scraper Constants
 BASE_URL = "https://bulbapedia.bulbagarden.net"
 INDEX_URL = "https://bulbapedia.bulbagarden.net/wiki/List_of_Pok%C3%A9mon_by_National_Pok%C3%A9dex_number"
 INDEX_PAGE = BeautifulSoup(requests.get(INDEX_URL).content, "html.parser")
 REGION_TABLES = INDEX_PAGE.find_all('table', attrs={"style" : "border-radius: 10px; -moz-border-radius: 10px; -webkit-border-radius: 10px; -khtml-border-radius: 10px; -icab-border-radius: 10px; -o-border-radius: 10px;; border: 2px solid #FF1111; background: #FF1111;"})
+OUTPUT = os.path.join(os.path.dirname(__file__), "output")
+IMG_OUTPUT = os.path.join(OUTPUT, "./images")
 
-# Region Index Constants
+if not os.path.exists(OUTPUT):
+    os.mkdir(OUTPUT)
+
+if not os.path.exists(IMG_OUTPUT):
+    os.mkdir(IMG_OUTPUT)
+
+# Pokemon Constants
+
+# Kanto Region
 KANTO = 0
+KANTO_START = 1
+KANTO_END = 151
 
 def get_pokemon_link(poke_number: int, region: int) -> str:
     """
@@ -33,8 +45,8 @@ def scrape_pokemon(poke_link: str):
     page_html = BeautifulSoup(requests.get(poke_link).content, features="html.parser")
 
     poke_table_style="float:right; text-align:center; width:33%; max-width:420px; background: #78C850; border: 2px solid #682A68; padding:2px;"
-    poke_table = page_html.find("table", attrs={"style" : poke_table_style})
-    top_section = poke_table.find("table", attrs={"style": "background:#A7DB8D; padding:2px; border-spacing:3px;"})
+    poke_table = page_html.find("div", id="mw-content-text").find_all("table", recursive=False, limit=2)[1]
+    top_section = poke_table.find("table")
 
     # Extract name, class, and number
     poke_name = top_section.find(name="big").text
@@ -46,7 +58,7 @@ def scrape_pokemon(poke_link: str):
     image_response = requests.get(poke_pic_link, stream=True)
     
     img_filename = poke_name + ".png"
-    with open(img_filename, "wb") as file:
+    with open(os.path.join(IMG_OUTPUT, img_filename), "wb") as file:
         file.write(image_response.content)
 
     # Extrat Type(s)
@@ -74,13 +86,24 @@ def scrape_pokemon(poke_link: str):
         heights.append(td.text.strip())
         
 
-    return {"name" : poke_name, "number": poke_number, "class" : poke_class, "image_path": os.path.join(os.path.dirname(__file__), img_filename), "height" : heights }
+    return {
+            "name" : poke_name, 
+            "number": poke_number, 
+            "class" : poke_class, 
+            "image_path": os.path.join(OUTPUT, img_filename), 
+            "height" : heights 
+            }
 
-
-def main():
-    return None
+def get_kanto():
+    poke_objects = []
+    # Iterate through the region's start and end pokemon index
+    for poke_number in range(KANTO_START, KANTO_END + 1):
+        # Get the link for this pokemon via the index
+        poke_link = get_pokemon_link(poke_number, KANTO)
+        # Append the scrape data object into a list
+        poke_objects.append(scrape_pokemon(poke_link))
+        
+    return poke_objects
 
 if __name__ == "__main__":
-    # main()
-    bulbasaur = scrape_pokemon("https://bulbapedia.bulbagarden.net/wiki/Bulbasaur_(Pok%C3%A9mon)")
-    print(bulbasaur)
+    get_kanto()
