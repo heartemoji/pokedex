@@ -44,7 +44,6 @@ def scrape_pokemon(poke_link: str):
 
     page_html = BeautifulSoup(requests.get(poke_link).content, features="html.parser")
 
-    poke_table_style="float:right; text-align:center; width:33%; max-width:420px; background: #78C850; border: 2px solid #682A68; padding:2px;"
     poke_table = page_html.find("div", id="mw-content-text").find_all("table", recursive=False, limit=2)[1]
     top_section = poke_table.find("table")
 
@@ -57,7 +56,7 @@ def scrape_pokemon(poke_link: str):
     poke_pic_link = "http://" + top_section.find("img")["src"][2:]
     image_response = requests.get(poke_pic_link, stream=True)
     
-    img_filename = poke_name + ".png"
+    img_filename = poke_number + "_" + poke_name + ".png"
     with open(os.path.join(IMG_OUTPUT, img_filename), "wb") as file:
         file.write(image_response.content)
 
@@ -84,15 +83,26 @@ def scrape_pokemon(poke_link: str):
     heights = []
     for td in height_pair:
         heights.append(td.text.strip())
-        
 
-    return {
+    # Extract weight, first in imperial and then in metric
+    weight_pair = poke_table.find("a", title="Weight").find_parent("b").find_next_sibling("table").find_all("td", limit=2)
+    weights = []
+    for td in weight_pair:
+        weights.append(td.text.strip())
+
+    pokedex_entry = page_html.find("td", style="vertical-align: middle; border: 1px solid #9DC1B7; padding-left:3px;").text
+    
+    poke_object = {
             "name" : poke_name, 
             "number": poke_number, 
             "class" : poke_class, 
             "image_path": os.path.join(OUTPUT, img_filename), 
-            "height" : heights 
+            "height" : heights,
+            "weight": weights ,
+            "entry" : pokedex_entry
             }
+
+    return poke_object
 
 def get_kanto():
     poke_objects = []
