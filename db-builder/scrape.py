@@ -49,8 +49,8 @@ def scrape_pokemon(poke_link: str):
     """
 
     page_html = BeautifulSoup(requests.get(poke_link).content, features="html.parser")
-
-    poke_table = page_html.find("div", id="mw-content-text").find_all("table", recursive=False, limit=2)[1]
+    
+    poke_table = page_html.find("div", class_="mw-parser-output").find_all("table", recursive=False, limit=2)[1]
     top_section = poke_table.find("table")
 
     # Extract name, class, and number
@@ -107,7 +107,7 @@ def scrape_pokemon(poke_link: str):
             "weight": weights ,
             "entry" : pokedex_entry
             }
-
+    print("Scraped " + poke_object["name"])
     return poke_object
 
 def get_kanto():
@@ -122,4 +122,4 @@ def get_kanto():
     return poke_objects
 
 if __name__ == "__main__":
-    get_kanto()
+    scrape_pokemon("https://bulbapedia.bulbagarden.net/wiki/Bulbasaur_(Pok%C3%A9mon)")
