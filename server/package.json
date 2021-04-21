@@ -1,0 +1,11 @@
+{
+  "name": "pokedex-backend",
+  "version": "0.0.1",
+  "description": "Package containing the backend functionality of the Pokedex web application",
+  "main": "app.js",
+  "scripts": {
+    "test": "nodemon app.js"
+  },
+  "author": "Tom Amaral",
+  "license": "MIT"
+}
