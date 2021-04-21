@@ -1,4 +1,4 @@
 output
 .vscode
-
+node_modules
 __pycache__
