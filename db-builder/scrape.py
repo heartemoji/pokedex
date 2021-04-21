@@ -1,3 +1,9 @@
+"""
+    scrape.py
+    Tom Amaral <thomasamaral2016@gmail.com>
+
+    A simple web scraper to scrape Pokemon information off Bulbapedia (for personal use only)
+"""
 import requests
 from bs4 import BeautifulSoup
 import re
