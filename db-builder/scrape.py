@@ -102,7 +102,7 @@ def scrape_pokemon(poke_link: str):
             "name" : poke_name, 
             "number": poke_number, 
             "class" : poke_class, 
-            "image_path": os.path.join(OUTPUT, img_filename), 
+            "imagePath": os.path.join(OUTPUT, img_filename), 
             "height" : heights,
             "weight": weights ,
             "entry" : pokedex_entry
