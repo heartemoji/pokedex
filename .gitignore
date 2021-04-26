@@ -2,3 +2,6 @@ output
 .vscode
 node_modules
 __pycache__
+dist-server
+
+build
