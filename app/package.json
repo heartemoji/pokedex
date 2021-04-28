@@ -4,16 +4,29 @@
   "description": "Package containing the backend functionality of the Pokedex web application",
   "main": "app.js",
   "scripts": {
-    "test": "nodemon app.js"
+    "clean": "rimraf dist-server",
+    "transpile": "babel ./server --out-dir dist-server",
+    "dev": "node ./dist-server/app.js",
+    "start-dev": "npm-run-all clean transpile dev"
   },
   "author": "Tom Amaral",
   "license": "MIT",
   "dependencies": {
-    "express": "^4.17.1"
+    "express": "^4.17.1",
+    "mongodb": "^3.6.6",
+    "npm-run-all": "^4.1.5"
   },
   "devDependencies": {
     "@babel/cli": "^7.13.16",
     "@babel/core": "^7.13.16",
-    "@babel/preset-env": "^7.13.15"
+    "@babel/node": "^7.13.13",
+    "@babel/preset-env": "^7.13.15",
+    "babel-node": "0.0.1-security",
+    "rimraf": "^3.0.2"
+  },
+  "babel": {
+    "presets": [
+      "@babel/preset-env"
+    ]
   }
 }
