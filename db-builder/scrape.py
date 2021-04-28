@@ -62,7 +62,7 @@ def scrape_pokemon(poke_link: str):
     poke_pic_link = "http://" + top_section.find("img")["src"][2:]
     image_response = requests.get(poke_pic_link, stream=True)
     
-    img_filename = poke_number + "_" + poke_name + ".png"
+    img_filename = (poke_number + "_" + poke_name + ".png").replace('#', '')
     with open(os.path.join(IMG_OUTPUT, img_filename), "wb") as file:
         file.write(image_response.content)
 
@@ -122,4 +122,4 @@ def get_kanto():
     return poke_objects
 
 if __name__ == "__main__":
-    scrape_pokemon("https://bulbapedia.bulbagarden.net/wiki/Bulbasaur_(Pok%C3%A9mon)")
+    get_kanto()
